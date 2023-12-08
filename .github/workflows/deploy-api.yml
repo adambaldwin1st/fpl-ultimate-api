@@ -27,4 +27,3 @@ jobs:
       - name: Display logs
         run: |
           cat restart_fpl_api.log
-          cat restart_nginx.log
