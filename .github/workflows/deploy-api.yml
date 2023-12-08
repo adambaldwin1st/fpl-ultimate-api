@@ -21,5 +21,10 @@ jobs:
             cd /var/www/html/fpl-ultimate/fpl-ultimate-api
             git fetch origin
             git reset --hard origin/main
-            echo "${{ secrets.HOST_PASSWORD }}" | sudo -S systemctl restart fpl-api
-            echo "${{ secrets.HOST_PASSWORD }}" | sudo -S systemctl restart nginx
+            echo "${{ secrets.HOST_PASSWORD }}" | sudo -S systemctl restart fpl-api > restart_fpl_api.log 2>&1
+            echo "${{ secrets.HOST_PASSWORD }}" | sudo -S systemctl restart nginx > restart_nginx.log 2>&1
+
+      - name: Display logs
+        run: |
+          cat restart_fpl_api.log
+          cat restart_nginx.log
