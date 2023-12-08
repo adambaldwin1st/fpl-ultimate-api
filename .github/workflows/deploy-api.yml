@@ -1,0 +1,25 @@
+name: Deploy API
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: SSH into Raspberry Pi and Force Pull
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_IP_ADDRESS }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.FPL_ULTIMATE_PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd /var/www/html/fpl-ultimate/fpl-ultimate-api
+            git fetch origin
+            git reset --hard origin/main
+            echo "${{ secrets.HOST_PASSWORD }}" | sudo -S systemctl restart api
+            echo "${{ secrets.HOST_PASSWORD }}" | sudo -S systemctl restart nginx
