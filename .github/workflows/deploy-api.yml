@@ -37,7 +37,7 @@ jobs:
           host: ${{ secrets.HOST_IP_ADDRESS }}
           port: 22
           username: ${{ secrets.USER }}
-          localPath: fpl-ultimate-api/target/fpl-ultimate-1.0.0.jar
+          localPath: target/fpl-ultimate-1.0.0.jar
           remotePath: /var/www/html/fpl-ultimate/api
           privateKey: ${{ secrets.FPL_ULTIMATE_PRIVATE_KEY }}
 
