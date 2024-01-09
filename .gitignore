@@ -95,3 +95,15 @@
 /.idea/misc.xml
 /.idea/modules.xml
 /.idea/vcs.xml
+/.idea/.gitignore
+/target/surefire-reports/com.fpl.ultimate.FplUltimateApplicationTests.txt
+/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
+/target/fpl-ultimate-1.0.0.jar
+/target/fpl-ultimate-1.0.0.jar.original
+/target/classes/com/fpl/ultimate/FplUltimateApplication.class
+/target/test-classes/com/fpl/ultimate/FplUltimateApplicationTests.class
+/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
+/target/maven-archiver/pom.properties
+/target/surefire-reports/TEST-com.fpl.ultimate.FplUltimateApplicationTests.xml
