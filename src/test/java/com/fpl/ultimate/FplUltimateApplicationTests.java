@@ -1,10 +1,10 @@
-package com.ultimate.fpl;
+package com.fpl.ultimate;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class FplApplicationTests {
+class FplUltimateApplicationTests {
 
 	@Test
 	void contextLoads() {
