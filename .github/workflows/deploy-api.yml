@@ -38,7 +38,7 @@ jobs:
           port: 22
           username: ${{ secrets.USER }}
           localPath: target/fpl-ultimate-1.0.0.jar
-          remotePath: /var/www/html/fpl-ultimate/api
+          remotePath: /var/www/html/fpl-ultimate/api/
           privateKey: ${{ secrets.FPL_ULTIMATE_PRIVATE_KEY }}
 
       - name: SSH into Raspberry Pi and Force Pull
