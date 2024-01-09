@@ -23,13 +23,23 @@ jobs:
       - name: Build with Maven
         run: mvn package
 
-      - name: SFTP File Upload
-        uses: depsypher/ftp-action@v2
+#      - name: SFTP File Upload
+#        uses: depsypher/ftp-action@v2
+#        with:
+#          host: ${{ secrets.HOST_IP_ADDRESS }}
+#          username: ${{ secrets.USER }}
+#          localFile: fpl-ultimate-api/target/fpl-ultimate-1.0.0.jar
+#          remoteDir: /var/www/html/fpl-ultimate/api
+
+      - name: SFTP SSH Action
+        uses: Creepios/sftp-action@v1.0.5
         with:
           host: ${{ secrets.HOST_IP_ADDRESS }}
+          port: 22
           username: ${{ secrets.USER }}
-          localFile: fpl-ultimate-api/target/fpl-ultimate-1.0.0.jar
-          remoteDir: /var/www/html/fpl-ultimate/api
+          localPath: fpl-ultimate-api/target/fpl-ultimate-1.0.0.jar
+          remotePath: /var/www/html/fpl-ultimate/api
+          privateKey: ${{ secrets.FPL_ULTIMATE_PRIVATE_KEY }}
 
       - name: SSH into Raspberry Pi and Force Pull
         uses: appleboy/ssh-action@master
