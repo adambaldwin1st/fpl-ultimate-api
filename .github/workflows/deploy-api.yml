@@ -49,5 +49,6 @@ jobs:
           key: ${{ secrets.FPL_ULTIMATE_PRIVATE_KEY }}
           port: 22
           script: |
+            sudo chmod +x /var/www/html/fpl-ultimate/api/fpl-ultimate-1.0.0.jar
             echo "${{ secrets.HOST_PASSWORD }}" | sudo -S systemctl restart fpl-api
             echo "${{ secrets.HOST_PASSWORD }}" | sudo -S systemctl restart nginx
