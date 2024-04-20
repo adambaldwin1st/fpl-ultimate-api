@@ -16,4 +16,7 @@ public class FootballApiClientConfig {
 
     @Value("${football.api.password}")
     private String password;
+
+    @Value("${FOOTBALL_API_KEY}")
+    private String key;
 }

@@ -1,11 +1,24 @@
 package com.fpl.ultimate.rest.http;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
-@Component
+import java.util.List;
+
+@Service
 public class FootballApiClientImpl implements FootballApiClient {
     private final FootballApiClientConfig config;
+
+    private HttpHeaders createHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("x-rapidapi-host", config.getHost());
+        headers.set("x-rapidapi-key", config.getKey());
+        return headers;
+    }
 
     @Autowired
     public FootballApiClientImpl(FootballApiClientConfig footballApiClientConfig) {
@@ -13,14 +26,7 @@ public class FootballApiClientImpl implements FootballApiClient {
     }
 
     @Override
-    public String fetchData() {
-        // Implementation to fetch football data from the API using host, username, and password
-        return "Football data from " + config.getHost();
-    }
-
-    @Override
-    public void sendData(String data) {
-        // Implementation to send football data to the API using host, username, and password
-        System.out.println("Sending football data to " + config.getUsername() + ": " + data);
+    public List<String> getTimezones() {
+        return List.of("Prod times!");
     }
 }

@@ -1,10 +1,10 @@
 package com.fpl.ultimate.auth;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 
 @Entity
