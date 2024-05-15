@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface FootballApiClient {
 
-    List<String> getTimezones();
+    ResponseEntity<String> getTimezones();
 }

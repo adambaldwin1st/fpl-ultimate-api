@@ -1,0 +1,20 @@
+{
+  "get": "timezone",
+  "parameters": [],
+  "errors": [],
+  "results": 8,
+  "paging": {
+    "current": 1,
+    "total": 1
+  },
+  "response": [
+    "America/Nassau",
+    "America/New_York",
+    "America/Nipigon",
+    "America/Nome",
+    "America/Noronha",
+    "America/North_Dakota/Beulah",
+    "America/North_Dakota/Center",
+    "America/North_Dakota/New_Salem"
+  ]
+}

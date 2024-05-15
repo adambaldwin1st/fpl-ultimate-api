@@ -17,6 +17,8 @@ public class FootballApiClientConfig {
     @Value("${football.api.password}")
     private String password;
 
-    @Value("${FOOTBALL_API_KEY}")
+    @Value("${football.api.key}")
     private String key;
+
+    private final String timeZoneUrl = "/timezone";
 }
