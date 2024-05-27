@@ -6,6 +6,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import java.io.IOException;
 
 @Service
 @Slf4j
+@ConditionalOnProperty(value = "mock.football.api", havingValue = "false")
 public class FootballApiClientImpl implements FootballApiClient {
     private final FootballApiClientConfig config;
 

@@ -1,6 +1,6 @@
 package com.fpl.ultimate.rest.http;
 
-import org.springframework.context.annotation.Profile;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -9,10 +9,9 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
 
 @Service
-@Profile("local")
+@ConditionalOnProperty(value = "mock.football.api", havingValue = "true", matchIfMissing = true)
 public class FootballApiMockClient implements FootballApiClient {
     @Override
     public ResponseEntity<String> getTimezones() {
