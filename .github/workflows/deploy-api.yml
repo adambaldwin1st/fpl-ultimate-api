@@ -10,37 +10,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '17'
-
-      - name: Set up Maven
-        run: |
-          sudo apt-get install -y maven
-
-      - name: Build with Maven
-        run: mvn package
-
-#      - name: SFTP File Upload
-#        uses: depsypher/ftp-action@v2
-#        with:
-#          host: ${{ secrets.HOST_IP_ADDRESS }}
-#          username: ${{ secrets.USER }}
-#          localFile: fpl-ultimate-api/target/fpl-ultimate-1.0.0.jar
-#          remoteDir: /var/www/html/fpl-ultimate/api
-
-      - name: SFTP SSH Action
-        uses: Creepios/sftp-action@v1.0.5
-        with:
-          host: ${{ secrets.HOST_IP_ADDRESS }}
-          port: 22
-          username: ${{ secrets.USER }}
-          localPath: target/fpl-ultimate-1.0.0.jar
-          remotePath: /var/www/html/fpl-ultimate/api/
-          privateKey: ${{ secrets.FPL_ULTIMATE_PRIVATE_KEY }}
-
       - name: SSH into Raspberry Pi and Force Pull
         uses: appleboy/ssh-action@master
         with:
@@ -49,6 +18,8 @@ jobs:
           key: ${{ secrets.FPL_ULTIMATE_PRIVATE_KEY }}
           port: 22
           script: |
-            sudo chmod +x /var/www/html/fpl-ultimate/api/fpl-ultimate-1.0.0.jar
+            cd /var/www/html/fpl-ultimate/fpl-ultimate-api
+            git fetch origin
+            git reset --hard origin/main
             echo "${{ secrets.HOST_PASSWORD }}" | sudo -S systemctl restart fpl-api
             echo "${{ secrets.HOST_PASSWORD }}" | sudo -S systemctl restart nginx
