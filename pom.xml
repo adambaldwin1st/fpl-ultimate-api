@@ -117,7 +117,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.fpl.ultimate.MainClass</mainClass>
+							<mainClass>com.fpl.ultimate.FplUltimateApplication</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
