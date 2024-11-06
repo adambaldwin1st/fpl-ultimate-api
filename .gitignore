@@ -108,3 +108,4 @@
 /target/maven-archiver/pom.properties
 /target/surefire-reports/TEST-com.fpl.ultimate.FplUltimateApplicationTests.xml
 /target/
+/.env
