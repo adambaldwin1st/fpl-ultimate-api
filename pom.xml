@@ -117,7 +117,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.fpl.ultimate.FplUltimateApplication</mainClass>
+							<mainClass>com.fpl.ultimate.FplUltimateApplication</mainClass> <!-- Correct entry point class -->
 						</manifest>
 					</archive>
 				</configuration>
