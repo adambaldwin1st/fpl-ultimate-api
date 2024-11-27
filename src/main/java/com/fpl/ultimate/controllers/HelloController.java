@@ -14,7 +14,7 @@ public class HelloController {
         return "FPL Ultimate API";
     }
 
-    @GetMapping(path = "/health", produces = "plain/text")
+    @GetMapping(path = "/health", produces = "text/plain")
     public ResponseEntity<String> health() {
         return ResponseEntity.ok("FPL Ultimate API is up and running!");
     }
