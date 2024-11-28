@@ -15,7 +15,7 @@ public class HelloController {
 
     @GetMapping(path = "/", produces = "text/plain")
     public String home() {
-        return "FPL Ultimate API: " + username;
+        return "FPL Ultimate API";
     }
 
     @GetMapping(path = "/health", produces = "text/plain")
