@@ -10,9 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/")
 public class HelloController {
 
-    @Value("${football.api.username}")
-    String username;
-
     @GetMapping(path = "/", produces = "text/plain")
     public String home() {
         return "FPL Ultimate API";
