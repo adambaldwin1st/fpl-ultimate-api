@@ -1,5 +1,6 @@
 package com.fpl.ultimate.controllers;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,9 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/")
 public class HelloController {
 
-    @GetMapping
+    @Value("${football.api.username}")
+    String username;
+
+    @GetMapping(path = "/", produces = "text/plain")
     public String home() {
-        return "FPL Ultimate API";
+        return "FPL Ultimate API: " + username;
     }
 
     @GetMapping(path = "/health", produces = "text/plain")
