@@ -77,11 +77,11 @@ jobs:
       # Step 5: Notify Discord - Deployment Started
       - name: Notify Discord - Deployment Started
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_FPL_ULTIMATE_WEBHOOK_URL: ${{ secrets.DISCORD_FPL_ULTIMATE_WEBHOOK_URL }}
         run: |
           curl -H "Content-Type: application/json" \
             -d '{"content":"🚀 Starting deployment of FPL Ultimate API version ${{ env.new_version }}..."}' \
-            "$DISCORD_WEBHOOK_URL"
+            "$DISCORD_FPL_ULTIMATE_WEBHOOK_URL"
 
       # Step 6: SSH into Raspberry Pi and Force Pull
       - name: SSH into Raspberry Pi and Force Pull
@@ -101,8 +101,8 @@ jobs:
       # Step 7: Notify Discord - Deployment Completed
       - name: Notify Discord - Deployment Completed
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_FPL_ULTIMATE_WEBHOOK_URL: ${{ secrets.DISCORD_FPL_ULTIMATE_WEBHOOK_URL }}
         run: |
           curl -H "Content-Type: application/json" \
             -d '{"content":"✅ Deployment of FPL Ultimate API version ${{ env.new_version }} completed successfully!"}' \
-            "$DISCORD_WEBHOOK_URL"
+            "$DISCORD_FPL_ULTIMATE_WEBHOOK_URL"
