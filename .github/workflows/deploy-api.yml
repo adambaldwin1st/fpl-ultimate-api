@@ -80,7 +80,7 @@ jobs:
           DISCORD_FPL_ULTIMATE_WEBHOOK_URL: ${{ secrets.DISCORD_FPL_ULTIMATE_WEBHOOK_URL }}
         run: |
           curl -H "Content-Type: application/json" \
-            -d '{"content":"🚀 Starting deployment of FPL Ultimate API version ${{ env.new_version }}..."}' \
+            -d '{"content":"🚀 Starting deployment of FPL Ultimate API version ${{ env.new_version }}"}' \
             "$DISCORD_FPL_ULTIMATE_WEBHOOK_URL"
 
       # Step 6: SSH into Raspberry Pi and Force Pull
