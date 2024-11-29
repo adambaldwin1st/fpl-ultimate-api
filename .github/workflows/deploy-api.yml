@@ -20,7 +20,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: Extract current version
+      # Step 2: Fetch all tags
+      - name: Fetch all tags
+        run: |
+          git fetch --tags
+
+      # Step 3: Get current version
       - name: Get current version
         id: get_version
         run: |
@@ -29,7 +34,7 @@ jobs:
           echo "Current version: $VERSION"
           echo "version=$VERSION" >> $GITHUB_ENV
 
-      # Step 3: Increment version
+      # Step 4: Increment version
       - name: Increment version
         id: increment_version
         run: |
@@ -64,10 +69,17 @@ jobs:
 
           # Generate new version
           NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+
+          # Check if the new version already exists
+          if git tag -l | grep -q "^$NEW_VERSION$"; then
+            echo "Error: Tag $NEW_VERSION already exists."
+            exit 1
+          fi
+
           echo "New version: $NEW_VERSION"
           echo "new_version=$NEW_VERSION" >> $GITHUB_ENV
 
-      # Step 4: Tag new version and push
+      # Step 5: Tag new version and push
       - name: Tag new version
         run: |
           git config user.name "github-actions[bot]"
@@ -75,7 +87,7 @@ jobs:
           git tag ${{ env.new_version }}
           git push origin ${{ env.new_version }}
 
-      # Step 5: Create GitHub Release
+      # Step 6: Create GitHub Release
       - name: Create Release
         uses: actions/create-release@v1
         env:
@@ -87,7 +99,7 @@ jobs:
           draft: false
           prerelease: false
 
-      # Step 6: Notify Discord - Deployment Started
+      # Step 7: Notify Discord - Deployment Started
       - name: Notify Discord - Deployment Started
         env:
           DISCORD_FPL_ULTIMATE_WEBHOOK_URL: ${{ secrets.DISCORD_FPL_ULTIMATE_WEBHOOK_URL }}
@@ -96,7 +108,7 @@ jobs:
             -d '{"content":"🚀 Starting deployment of FPL Ultimate API version ${{ env.new_version }}"}' \
             "$DISCORD_FPL_ULTIMATE_WEBHOOK_URL"
 
-      # Step 7: SSH into Raspberry Pi and Force Pull
+      # Step 8: SSH into Raspberry Pi and Force Pull
       - name: SSH into Raspberry Pi and Force Pull
         uses: appleboy/ssh-action@master
         with:
@@ -111,7 +123,7 @@ jobs:
             echo "${{ secrets.HOST_PASSWORD }}" | sudo -S systemctl restart fpl-api
             echo "${{ secrets.HOST_PASSWORD }}" | sudo -S systemctl restart nginx
 
-      # Step 8: Notify Discord - Deployment Completed
+      # Step 9: Notify Discord - Deployment Completed
       - name: Notify Discord - Deployment Completed
         env:
           DISCORD_FPL_ULTIMATE_WEBHOOK_URL: ${{ secrets.DISCORD_FPL_ULTIMATE_WEBHOOK_URL }}
