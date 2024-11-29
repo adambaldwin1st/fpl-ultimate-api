@@ -29,13 +29,18 @@ jobs:
           echo "Current version: $VERSION"
           echo "version=$VERSION" >> $GITHUB_ENV
 
-      # Step 3: Increment version
       - name: Increment version
         id: increment_version
         run: |
+          # Extract and validate the current version
+          VERSION=${{ env.version }}
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            VERSION="0.0.0"
+          fi
+
           # Parse the current version
           IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
-          
+
           # Increment based on input
           case "${{ github.event.inputs.version_type }}" in
             Major)
@@ -49,6 +54,10 @@ jobs:
               ;;
             Patch)
               PATCH=$((PATCH + 1))
+              ;;
+            *)
+              echo "Invalid version type input: ${{ github.event.inputs.version_type }}"
+              exit 1
               ;;
           esac
 
