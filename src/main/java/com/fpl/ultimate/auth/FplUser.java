@@ -6,13 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user")
-public class User {
+@Table(name = "fpl_users")
+public class FplUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,13 +31,18 @@ public class User {
     @Column(name = "email", unique = true, nullable = false, length = 100)
     private String email;
 
-    @Column(name = "password_hash", nullable = false, length = 255)
+    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
+
+    @Column(name = "roles")
+    List<Role> roles;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private OffsetDateTime createdAt;
 
     @Column(name = "last_login")
     private OffsetDateTime lastLogin;
-}
 
+    @Column(name = "is_active")
+    private boolean isActive;
+}

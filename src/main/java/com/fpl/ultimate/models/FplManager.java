@@ -1,6 +1,5 @@
 package com.fpl.ultimate.models;
 
-import com.fpl.ultimate.auth.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,10 +20,6 @@ public class FplManager {
 
     @Column(name = "name", nullable = false, length = 100)
     private String name;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
 
     @ElementCollection
     @CollectionTable(name = "manager_squad", joinColumns = @JoinColumn(name = "manager_id"))
