@@ -20,7 +20,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())  // Require authentication for all requests
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/league/**", "/error").permitAll()  // Read-only, publicly-sourced league data; /error so failures surface their real status instead of a masking 401
+                        .anyRequest().authenticated())
                 .httpBasic(withDefaults()); // Enable basic auth
 
         return http.build();
