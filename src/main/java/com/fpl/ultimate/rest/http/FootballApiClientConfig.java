@@ -11,13 +11,13 @@ public class FootballApiClientConfig {
     @Value("${football.api.host}")
     private String host;
 
-    @Value("${football.api.username}")
+    @Value("${football.api.username:}")
     private String username;
 
-    @Value("${football.api.password}")
+    @Value("${football.api.password:}")
     private String password;
 
-    @Value("${football.api.key}")
+    @Value("${football.api.key:}")
     private String key;
 
     private final String timeZoneUrl = "/timezone";

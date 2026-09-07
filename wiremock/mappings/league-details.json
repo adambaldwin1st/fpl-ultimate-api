@@ -1,0 +1,108 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/league/38029/details"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "league": {
+        "id": 38029,
+        "name": "FPL Ultimate (Local)"
+      },
+      "league_entries": [
+        {
+          "id": 101,
+          "entry_id": 1001,
+          "entry_name": "Team One",
+          "player_first_name": "Alice",
+          "player_last_name": "Smith",
+          "short_name": "T1"
+        },
+        {
+          "id": 102,
+          "entry_id": 1002,
+          "entry_name": "Team Two",
+          "player_first_name": "Bob",
+          "player_last_name": "Jones",
+          "short_name": "T2"
+        },
+        {
+          "id": 103,
+          "entry_id": 1003,
+          "entry_name": "Team Three",
+          "player_first_name": "Carol",
+          "player_last_name": "Williams",
+          "short_name": "T3"
+        }
+      ],
+      "matches": [
+        {
+          "event": 1,
+          "started": true,
+          "finished": true,
+          "league_entry_1": 101,
+          "league_entry_1_points": 72,
+          "league_entry_2": 102,
+          "league_entry_2_points": 54
+        },
+        {
+          "event": 1,
+          "started": true,
+          "finished": true,
+          "league_entry_1": 103,
+          "league_entry_2": 101,
+          "league_entry_1_points": 48,
+          "league_entry_2_points": 61
+        },
+        {
+          "event": 2,
+          "started": true,
+          "finished": false,
+          "league_entry_1": 102,
+          "league_entry_1_points": 38,
+          "league_entry_2": 103,
+          "league_entry_2_points": 29
+        }
+      ],
+      "standings": [
+        {
+          "league_entry": 101,
+          "rank": 1,
+          "rank_sort": 1,
+          "matches_won": 2,
+          "matches_drawn": 0,
+          "matches_lost": 0,
+          "points_for": 133,
+          "points_against": 102,
+          "total": 6
+        },
+        {
+          "league_entry": 102,
+          "rank": 2,
+          "rank_sort": 2,
+          "matches_won": 0,
+          "matches_drawn": 0,
+          "matches_lost": 1,
+          "points_for": 54,
+          "points_against": 72,
+          "total": 0
+        },
+        {
+          "league_entry": 103,
+          "rank": 3,
+          "rank_sort": 3,
+          "matches_won": 0,
+          "matches_drawn": 0,
+          "matches_lost": 1,
+          "points_for": 48,
+          "points_against": 61,
+          "total": 0
+        }
+      ]
+    }
+  }
+}
