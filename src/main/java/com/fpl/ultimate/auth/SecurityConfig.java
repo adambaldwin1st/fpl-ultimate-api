@@ -21,7 +21,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/league/**", "/error").permitAll()  // Read-only, publicly-sourced league data; /error so failures surface their real status instead of a masking 401
+                        .requestMatchers("/fpl/**", "/league/**", "/error").permitAll()  // Read-only, publicly-sourced FPL data; /error so failures surface their real status instead of a masking 401
                         .anyRequest().authenticated())
                 .httpBasic(withDefaults()); // Enable basic auth
 

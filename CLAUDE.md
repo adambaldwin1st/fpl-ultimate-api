@@ -26,10 +26,15 @@ The mock client (`FootballApiMockClient`) is used locally to avoid hitting the r
 src/main/java/com/fpl/ultimate/
 ├── auth/              # OAuth2/JWT config — scaffolded, not active short-term
 ├── constants/         # Enums (e.g. FieldPosition)
-├── controllers/       # REST controllers
+├── controllers/       # Misc controllers (home, health)
+├── draft/
+│   ├── client/        # FplDraftApiClient — calls draft.premierleague.com
+│   ├── controller/    # DraftLeagueController — /league/** endpoints
+│   ├── dto/           # Response DTOs (DraftLeagueDetails, Standing, Match, etc.)
+│   └── service/       # DraftLeagueService — business logic
 ├── models/            # JPA entities
 ├── repositories/      # Spring Data repositories
-├── rest/http/         # FPL API client (interface + real/mock impls)
+├── rest/http/         # FootballApiClient — calls football.api-sports.io (long-term stat sourcing)
 └── FplUtils.java
 ```
 
