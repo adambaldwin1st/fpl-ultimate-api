@@ -44,28 +44,28 @@
           "event": 1,
           "started": true,
           "finished": true,
-          "league_entry_1": 101,
-          "league_entry_1_points": 72,
-          "league_entry_2": 102,
-          "league_entry_2_points": 54
+          "league_entry1": 101,
+          "league_entry1_points": 72,
+          "league_entry2": 102,
+          "league_entry2_points": 54
         },
         {
           "event": 1,
           "started": true,
           "finished": true,
-          "league_entry_1": 103,
-          "league_entry_2": 101,
-          "league_entry_1_points": 48,
-          "league_entry_2_points": 61
+          "league_entry1": 103,
+          "league_entry2": 101,
+          "league_entry1_points": 48,
+          "league_entry2_points": 61
         },
         {
           "event": 2,
           "started": true,
           "finished": false,
-          "league_entry_1": 102,
-          "league_entry_1_points": 38,
-          "league_entry_2": 103,
-          "league_entry_2_points": 29
+          "league_entry1": 102,
+          "league_entry1_points": 38,
+          "league_entry2": 103,
+          "league_entry2_points": 29
         }
       ],
       "standings": [
