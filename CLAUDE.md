@@ -8,17 +8,18 @@ Spring Boot REST API that scrapes and proxies data from the official Fantasy Pre
 - **Spring Data JPA** + **Hibernate** — PostgreSQL (stage/prod), H2 (test)
 - **Spring Security** — OAuth2/JWT scaffolded for future auth, not active short-term
 - **Lombok** for boilerplate reduction
-- **OkHttp3** (`FootballApiClient`) for outbound HTTP calls to the FPL API
+- **OkHttp3** (`FootballApiClient`) for outbound HTTP calls to the football stats API (long-term)
+- **WireMock** embedded as a Spring bean (`@Profile("local")`) — stubs the FPL draft API locally
 
 ## Environments
 
-| Environment | API Client | Database |
+| Environment | FPL Draft API | Database |
 |---|---|---|
-| local | `FootballApiMockClient` | H2 / local PostgreSQL |
-| stage | `FootballApiClientImpl` | PostgreSQL |
-| prod | `FootballApiClientImpl` | PostgreSQL |
+| local | WireMock (embedded, port 8089) | H2 in-memory |
+| stage | `draft.premierleague.com` | PostgreSQL |
+| prod | `draft.premierleague.com` | PostgreSQL |
 
-The mock client (`FootballApiMockClient`) is used locally to avoid hitting the real FPL API during development. Spring profiles control which implementation is active.
+WireMock starts automatically with the app on the `local` profile. Stub mappings live in `wiremock/mappings/`.
 
 ## Project Structure
 
@@ -41,10 +42,10 @@ src/main/java/com/fpl/ultimate/
 ## Running Locally
 
 ```bash
-mvn spring-boot:run
+mvn spring-boot:run -Dspring-boot.run.profiles=local
 ```
 
-Requires a `.env` file or environment variables for DB connection and any secrets. Use the mock profile for local dev to avoid hitting the real FPL API.
+WireMock starts automatically on port 8089, serving stubs from `wiremock/mappings/`. No `.env` or external services required for local dev. Bruno collections in `bruno/` can be used to test the API (base URL `http://localhost:5001`).
 
 ## Priorities
 
@@ -57,4 +58,6 @@ Requires a `.env` file or environment variables for DB connection and any secret
 - Standard Spring Boot conventions throughout
 - Lombok is in use — continue using it for new models/services
 - Auth (`auth/`) is scaffolded for later — do not wire it into new endpoints short-term without discussion
-- Keep `FootballApiClient` as the interface boundary — new FPL API calls go through it, not scattered across controllers
+- `draft/` package owns all FPL draft API interaction — new draft endpoints go there
+- `rest/http/` (`FootballApiClient`) is reserved for the long-term football stats API, not draft calls
+- Jackson uses `SNAKE_CASE` naming: digits do NOT trigger underscores (`leagueEntry1` → `league_entry1`, not `league_entry_1`)
