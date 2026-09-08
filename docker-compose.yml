@@ -1,3 +1,10 @@
+# Shared log rotation so container logs can't grow unbounded on the Pi's storage.
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   postgres:
     image: postgres:16
@@ -10,6 +17,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./deploy/postgres-init:/docker-entrypoint-initdb.d
+    logging: *default-logging
     restart: unless-stopped
 
   # Built and pushed by .github/workflows/deploy-release.yml on every GitHub Release.
@@ -28,6 +36,7 @@ services:
       FOOTBALL_API_KEY: ${FOOTBALL_API_KEY}
     depends_on:
       - postgres
+    logging: *default-logging
     restart: unless-stopped
 
   # Built and pushed by .github/workflows/deploy-stage.yml on every push to main.
@@ -46,6 +55,19 @@ services:
       FOOTBALL_API_KEY: ${FOOTBALL_API_KEY}
     depends_on:
       - postgres
+    logging: *default-logging
+    restart: unless-stopped
+
+  # Live web UI over all container logs (http://<pi-lan-ip>:8081) — see DEPLOYMENT.md.
+  # Bound without a host-IP prefix, so it's reachable on the LAN but not from the internet,
+  # since 8081 is never forwarded through the router (only 80/443 are).
+  dozzle:
+    image: amir20/dozzle:latest
+    ports:
+      - "8081:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    logging: *default-logging
     restart: unless-stopped
 
 

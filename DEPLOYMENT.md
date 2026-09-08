@@ -92,6 +92,22 @@ curl https://api.fplultimate.com/health
 curl https://stage.api.fplultimate.com/health
 ```
 
+## Viewing logs
+
+No paid platform needed at this scale. Two options, both already wired up:
+
+- **CLI, zero setup**: `docker compose logs -f api-prod` (or `api-stage`, `postgres`). Log
+  rotation is capped at 10MB × 3 files per container via the `x-logging` anchor in
+  `docker-compose.yml`, so this can't grow unbounded on the Pi's storage.
+- **Browser, live tail across all containers**: [Dozzle](https://dozzle.dev) runs as its own
+  service (`docker compose up -d` brings it up along with everything else) at
+  `http://<pi-lan-ip>:8081`. It's bound without a host-IP prefix, so it's reachable from any
+  device on the home network but not from the internet — 8081 is never forwarded through the
+  router. No auth in front of it currently; fine for LAN-only personal use, but don't add an
+  8081 port-forward or a public nginx location for it without adding auth first, since it reads
+  straight off the Docker socket (mounted read-only, but that's a thin protection — anyone who
+  can reach Dozzle's UI can see logs from every container on the box).
+
 ## Open items — resolve before assuming either way
 
 - **Frontend hosting model is unresolved.** `fpl-ultimate-frontend` already has a
