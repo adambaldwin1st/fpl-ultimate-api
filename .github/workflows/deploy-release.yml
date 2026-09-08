@@ -1,0 +1,63 @@
+name: Build and Deploy API (Prod)
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Run tests
+        run: mvn -B test
+        env:
+          FOOTBALL_API_USERNAME: test
+          FOOTBALL_API_PASSWORD: test
+          FOOTBALL_API_KEY: test
+
+      - name: Build jar
+        run: mvn -B -DskipTests package
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pull and restart prod container
+        run: |
+          docker compose --env-file /opt/fpl-ultimate/.env pull api-prod
+          docker compose --env-file /opt/fpl-ultimate/.env up -d api-prod
+
+      - name: Smoke test
+        run: |
+          sleep 5
+          curl -sf http://localhost:5000/health
