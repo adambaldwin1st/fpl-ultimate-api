@@ -1,0 +1,34 @@
+name: Deploy Lambda (Prod)
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout release ${{ github.event.release.tag_name }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-2
+
+      - name: Package Lambda
+        run: ./lambda/package.sh
+
+      - name: Deploy to prod Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name fpl-ultimate-draft-scraper \
+            --zip-file fileb://lambda/function.zip \
+            --region us-east-2

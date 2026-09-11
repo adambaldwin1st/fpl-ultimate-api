@@ -13,6 +13,34 @@ by `mvn`, and nothing in `src/` depends on this folder.
 - `FPL_DRAFT_LEAGUE_ID` — required, your draft league's ID.
 - `FPL_DRAFT_API_HOST` — optional, defaults to `https://draft.premierleague.com`.
 
+Set via the Lambda's environment config — see `../terraform/variables.tf`
+(`fpl_draft_league_id`, `fpl_draft_league_id_stage`).
+
+## Infrastructure
+
+Two Lambda functions (`fpl-ultimate-draft-scraper` prod,
+`fpl-ultimate-draft-scraper-stage` stage), each behind its own API Gateway
+HTTP API with a custom domain (`api.fplultimate.com` /
+`stage.api.fplultimate.com`), are provisioned via Terraform in `../terraform/`.
+See that directory's resources for the full picture — ACM cert, Route53
+records, the GitHub OIDC deploy role, etc.
+
+Terraform is applied locally/manually, not from CI. One-time setup:
+
+```bash
+cd ../terraform
+cp terraform.tfvars.example terraform.tfvars   # fill in your real league ID
+terraform init
+terraform plan
+terraform apply
+```
+
+After `apply`, take the `gha_deploy_role_arn` output and set it as a repo
+variable in GitHub: **Settings → Secrets and variables → Actions → Variables
+→ New repository variable** → name `AWS_DEPLOY_ROLE_ARN`, value the role ARN.
+That's what lets the deploy workflows authenticate via OIDC with no stored
+AWS keys.
+
 ## Local test
 
 ```bash
@@ -24,28 +52,42 @@ print(get_current_matchups())
 "
 ```
 
-## Packaging for deploy
+## Packaging
 
 ```bash
-cd lambda
-pip install -r requirements.txt -t package/
-cp app.py package/
-cd package && zip -r ../function.zip . && cd ..
+./package.sh
 ```
 
-## Deploy (first time)
+Builds `function.zip` (installs anything in `requirements.txt` alongside
+`app.py`). Used by both the deploy workflows and manual deploys below.
 
-1. Create the function in the AWS console (or CLI), runtime Python 3.12+,
-   handler `app.handler`, upload `function.zip`.
-2. Set the two environment variables above.
-3. Enable a **Function URL** (Configuration → Function URL → Create), auth
-   type `NONE` for a public read-only API.
-4. Test: `curl https://<function-url>/standings`
+## Deploying
 
-## Redeploy
+Normally this happens via GitHub Actions, not manually:
+
+- **Stage**: `Actions → Deploy Lambda (Stage) → Run workflow` — prompts for a
+  region (default `us-east-2`) and a branch to deploy.
+- **Prod**: publish a GitHub Release. `Deploy Lambda (Prod)` deploys that
+  release's commit automatically.
+
+Both just run `aws lambda update-function-code` against the Lambda functions
+Terraform already created — they don't touch infrastructure.
+
+### Manual deploy (if needed)
 
 ```bash
+./package.sh
 aws lambda update-function-code \
   --function-name fpl-ultimate-draft-scraper \
-  --zip-file fileb://function.zip
+  --zip-file fileb://function.zip \
+  --region us-east-2
+```
+
+Swap the function name for `fpl-ultimate-draft-scraper-stage` to target stage.
+
+## Verifying
+
+```bash
+curl https://api.fplultimate.com/standings
+curl https://stage.api.fplultimate.com/current-matchups
 ```

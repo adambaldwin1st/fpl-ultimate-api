@@ -1,0 +1,5 @@
+# Copy to terraform.tfvars (gitignored) and fill in real values.
+# terraform.tfvars is never committed — it holds your actual league ID.
+
+fpl_draft_league_id = "12345"
+# fpl_draft_league_id_stage = "12345"  # optional, defaults to the value above
