@@ -13,3 +13,7 @@ target/
 
 # Old archived project copy
 FPL Ultimate/
+
+# Lambda build artifacts
+lambda/package/
+lambda/function.zip
