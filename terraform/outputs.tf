@@ -1,5 +1,5 @@
 output "gha_deploy_role_arn" {
-  description = "Set this as the repo variable AWS_DEPLOY_ROLE_ARN in GitHub (Settings > Secrets and variables > Actions > Variables)."
+  description = "Set this as the repo secret AWS_DEPLOY_ROLE_ARN in GitHub (Settings > Secrets and variables > Actions > Secrets)."
   value       = aws_iam_role.gha_deploy.arn
 }
 

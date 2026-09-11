@@ -38,8 +38,8 @@ terraform apply
 ```
 
 After `apply`, take the `gha_deploy_role_arn` output and set it as a repo
-variable in GitHub: **Settings → Secrets and variables → Actions → Variables
-→ New repository variable** → name `AWS_DEPLOY_ROLE_ARN`, value the role ARN.
+secret in GitHub: **Settings → Secrets and variables → Actions → Secrets
+→ New repository secret** → name `AWS_DEPLOY_ROLE_ARN`, value the role ARN.
 That's what lets the deploy workflows authenticate via OIDC with no stored
 AWS keys.
 
