@@ -1,8 +1,9 @@
 """
-Short-term FPL Draft scraper, deployed as a standalone AWS Lambda with a Function URL.
+Short-term FPL Draft scraper, deployed as a standalone AWS Lambda behind API Gateway.
 
-Mirrors the logic in the Java DraftLeagueService (src/main/java/com/fpl/ultimate/draft/)
-so behavior stays consistent with the long-term Spring Boot API. This module has no
+Mirrors the logic AND the JSON contract (routes, camelCase keys) of the Java
+DraftLeagueService (src/main/java/com/fpl/ultimate/draft/) so that swapping this
+Lambda for the Spring Boot API later needs no frontend changes. This module has no
 dependency on the Java code or the Maven build — it's plain Python, deployed separately.
 """
 
@@ -71,15 +72,15 @@ def to_standings_row(standing, entries_by_id, played_by_entry):
     entry = entries_by_id[standing["league_entry"]]
     return {
         "rank": standing["rank"],
-        "team_name": entry["entry_name"],
-        "manager_name": f'{entry["player_first_name"]} {entry["player_last_name"]}',
+        "teamName": entry["entry_name"],
+        "managerName": f'{entry["player_first_name"]} {entry["player_last_name"]}',
         "played": played_by_entry.get(standing["league_entry"], 0),
         "won": standing["matches_won"],
         "drawn": standing["matches_drawn"],
         "lost": standing["matches_lost"],
-        "points_for": standing["points_for"],
-        "points_against": standing["points_against"],
-        "league_points": standing["total"],
+        "pointsFor": standing["points_for"],
+        "pointsAgainst": standing["points_against"],
+        "leaguePoints": standing["total"],
     }
 
 
@@ -88,10 +89,10 @@ def to_matchup_view(match, entries_by_id):
     away = entries_by_id[match["league_entry_2"]]
     return {
         "gameweek": match["event"],
-        "home_team_name": home["entry_name"],
-        "home_score": match["league_entry_1_points"],
-        "away_team_name": away["entry_name"],
-        "away_score": match["league_entry_2_points"],
+        "homeTeamName": home["entry_name"],
+        "homeScore": match["league_entry_1_points"],
+        "awayTeamName": away["entry_name"],
+        "awayScore": match["league_entry_2_points"],
         "finished": match["finished"],
     }
 
@@ -129,9 +130,9 @@ def handler(event, context):
     path = event.get("rawPath") or event.get("path") or "/"
 
     try:
-        if path.rstrip("/").endswith("/standings"):
+        if path.rstrip("/").endswith("/league/standings"):
             return _response(200, get_standings())
-        if path.rstrip("/").endswith("/current-matchups"):
+        if path.rstrip("/").endswith("/league/current-matchups"):
             return _response(200, get_current_matchups())
         return _response(404, {"error": f"No route for path '{path}'"})
     except FplDraftApiError as e:

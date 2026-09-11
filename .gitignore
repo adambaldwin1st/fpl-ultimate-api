@@ -17,6 +17,7 @@ FPL Ultimate/
 # Lambda build artifacts
 lambda/package/
 lambda/function.zip
+lambda/__pycache__/
 
 # Terraform
 terraform/.terraform/

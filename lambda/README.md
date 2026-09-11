@@ -1,8 +1,10 @@
 # FPL Draft Lambda Scraper (short-term)
 
 Standalone Python Lambda that scrapes `draft.premierleague.com` and serves
-`/standings` and `/current-matchups`, mirroring the logic in
-`DraftLeagueService` under `src/main/java/com/fpl/ultimate/draft/`.
+`/league/standings` and `/league/current-matchups`, mirroring both the logic and
+the JSON contract (routes, camelCase keys) of `DraftLeagueService` under
+`src/main/java/com/fpl/ultimate/draft/` — so swapping this Lambda for the real
+Spring Boot API later needs no frontend changes.
 
 This is a short-term stand-in for the Spring Boot API's draft endpoints and is
 intentionally decoupled from the Java/Maven build — nothing here is picked up
@@ -88,6 +90,6 @@ Swap the function name for `fpl-ultimate-draft-scraper-stage` to target stage.
 ## Verifying
 
 ```bash
-curl https://api.fplultimate.com/standings
-curl https://stage.api.fplultimate.com/current-matchups
+curl https://api.fplultimate.com/league/standings
+curl https://stage.api.fplultimate.com/league/current-matchups
 ```

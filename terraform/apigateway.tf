@@ -1,6 +1,12 @@
 resource "aws_apigatewayv2_api" "prod" {
   name          = "fpl-ultimate-draft-scraper-prod"
   protocol_type = "HTTP"
+
+  cors_configuration {
+    allow_origins = ["https://www.fplultimate.com", "https://fplultimate.com"]
+    allow_methods = ["GET", "OPTIONS"]
+    allow_headers = ["content-type"]
+  }
 }
 
 resource "aws_apigatewayv2_integration" "prod" {
@@ -25,6 +31,12 @@ resource "aws_apigatewayv2_stage" "prod" {
 resource "aws_apigatewayv2_api" "stage" {
   name          = "fpl-ultimate-draft-scraper-stage"
   protocol_type = "HTTP"
+
+  cors_configuration {
+    allow_origins = ["https://www.fplultimate.com", "https://fplultimate.com", "http://localhost:3000"]
+    allow_methods = ["GET", "OPTIONS"]
+    allow_headers = ["content-type"]
+  }
 }
 
 resource "aws_apigatewayv2_integration" "stage" {
