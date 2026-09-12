@@ -21,6 +21,24 @@ If the current gameweek's lineups aren't locked yet (that picks endpoint
 player naturally comes back with `started: false` and `opponent`/`isHome` set,
 no `points`, since none of those games have happened yet.
 
+**Known limitation (open, as of 2026-09-11):** that fallback roster can be
+stale if a waiver/free-agent move happened between the last locked gameweek
+and now — e.g. a manager drops a player after their locked gameweek but
+before the next one locks, and the dropped player still shows up in the
+fallback roster since we're reading last week's *locked* picks, which have
+no way to reflect moves made since. Confirmed via a real report: Brian
+Brobbey was a GW3 starter (correctly shown) but had been dropped before
+GW4, and the app still showed him as part of the upcoming roster.
+
+Next step to fix this: check whether `draft.premierleague.com` exposes a
+"current roster" endpoint distinct from `entry/{id}/event/{gw}` (which is
+specifically the locked lineup *for that gameweek*) - something reflecting
+real-time squad membership regardless of whether the next gameweek's
+starting-11 order has been locked in yet. If it exists, the fallback should
+use that for the player list (even though we still won't know the *starting
+11 order* until it locks). Investigation was interrupted before finding out
+- start there.
+
 This is a short-term stand-in for the Spring Boot API's draft endpoints and is
 intentionally decoupled from the Java/Maven build — nothing here is picked up
 by `mvn`, and nothing in `src/` depends on this folder.
