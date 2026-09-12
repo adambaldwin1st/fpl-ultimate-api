@@ -1,10 +1,25 @@
 # FPL Draft Lambda Scraper (short-term)
 
 Standalone Python Lambda that scrapes `draft.premierleague.com` and serves
-`/league/standings` and `/league/current-matchups`, mirroring both the logic and
-the JSON contract (routes, camelCase keys) of `DraftLeagueService` under
-`src/main/java/com/fpl/ultimate/draft/` — so swapping this Lambda for the real
-Spring Boot API later needs no frontend changes.
+`/league/standings`, `/league/current-matchups`, and `/league/gameweek-points`,
+mirroring both the logic and the JSON contract (routes, camelCase keys) of
+`DraftLeagueService` under `src/main/java/com/fpl/ultimate/draft/` — so swapping
+this Lambda for the real Spring Boot API later needs no frontend changes.
+
+### `/league/gameweek-points?team=<teamName>`
+
+Per-player gameweek points for `team` and its real current-gameweek opponent,
+for the head-to-head Points screen. Pulls from four `draft.premierleague.com`
+endpoints beyond the league details call the other routes use:
+`bootstrap-static` (player/team master data), `entry/{id}/event/{gw}` (a team's
+picks), `event/{gw}/live` (per-player points + scoring breakdown), and
+`event/{gw}/fixtures` (opponent/home-away/kickoff status).
+
+If the current gameweek's lineups aren't locked yet (that picks endpoint
+404s until shortly before its first kickoff), this falls back to the last
+*locked* gameweek's roster shown against the real upcoming fixtures — every
+player naturally comes back with `started: false` and `opponent`/`isHome` set,
+no `points`, since none of those games have happened yet.
 
 This is a short-term stand-in for the Spring Boot API's draft endpoints and is
 intentionally decoupled from the Java/Maven build — nothing here is picked up
@@ -92,4 +107,5 @@ Swap the function name for `fpl-ultimate-draft-scraper-stage` to target stage.
 ```bash
 curl https://api.fplultimate.com/league/standings
 curl https://stage.api.fplultimate.com/league/current-matchups
+curl "https://stage.api.fplultimate.com/league/gameweek-points?team=Rosie%20FC"
 ```
