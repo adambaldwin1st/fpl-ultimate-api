@@ -1,142 +1,21 @@
-# FPL Draft Lambda Scraper (short-term)
+# FPL Ultimate API
 
-Standalone Python Lambda that scrapes `draft.premierleague.com` and serves
-`/league/standings`, `/league/current-matchups`, `/league/gameweek-points`, and
-`/league/players`, mirroring both the logic and the JSON contract (routes,
-camelCase keys) of `DraftLeagueService` under
-`src/main/java/com/fpl/ultimate/draft/` — so swapping this Lambda for the real
-Spring Boot API later needs no frontend changes.
+The backend for FPL Ultimate — a fully standalone Fantasy Premier League platform with custom scoring rules and team management, built as an alternative to the official (and deeply frustrating) `draft.premierleague.com`. Currently operates as a read-only proxy of the official FPL API while the standalone platform is in development.
 
-### `/league/gameweek-points?team=<teamName>`
+---
 
-Per-player gameweek points for `team` and its real current-gameweek opponent,
-for the head-to-head Points screen. Pulls from four `draft.premierleague.com`
-endpoints beyond the league details call the other routes use:
-`bootstrap-static` (player/team master data), `entry/{id}/event/{gw}` (a team's
-picks), `event/{gw}/live` (per-player points + scoring breakdown), and
-`event/{gw}/fixtures` (opponent/home-away/kickoff status).
+### Claude Code Setup
 
-If the current gameweek's lineups aren't locked yet (that picks endpoint
-404s until shortly before its first kickoff), this falls back to the last
-*locked* gameweek's roster shown against the real upcoming fixtures — every
-player naturally comes back with `started: false` and `opponent`/`isHome` set,
-no `points`, since none of those games have happened yet.
+This repo uses a `CLAUDE.md` file to provide AI context when working with Claude Code. The parent directory (`fpl-ultimate/`) contains a top-level `CLAUDE.md` that imports both this file and the frontend's `CLAUDE.md`, so Claude has full project context when activated from the parent.
 
-**Known limitation (open, as of 2026-09-11):** that fallback roster can be
-stale if a waiver/free-agent move happened between the last locked gameweek
-and now — e.g. a manager drops a player after their locked gameweek but
-before the next one locks, and the dropped player still shows up in the
-fallback roster since we're reading last week's *locked* picks, which have
-no way to reflect moves made since. Confirmed via a real report: Brian
-Brobbey was a GW3 starter (correctly shown) but had been dropped before
-GW4, and the app still showed him as part of the upcoming roster.
+To replicate this for a new developer:
 
-Next step to fix this: check whether `draft.premierleague.com` exposes a
-"current roster" endpoint distinct from `entry/{id}/event/{gw}` (which is
-specifically the locked lineup *for that gameweek*) - something reflecting
-real-time squad membership regardless of whether the next gameweek's
-starting-11 order has been locked in yet. If it exists, the fallback should
-use that for the player list (even though we still won't know the *starting
-11 order* until it locks). Investigation was interrupted before finding out
-- start there.
+1. Clone both repos (`fpl-ultimate-api` and `fpl-ultimate-frontend`) into a shared parent directory
+2. Create a `CLAUDE.md` in the parent directory with the following content:
 
-### `/league/players`
-
-Season-to-date stats for every Premier League player who's played a minute
-this season, for the Players search/stats screen — sourced entirely from
-`bootstrap-static` (no per-league or per-entry calls, so this list is the
-same across leagues). Each player has `name`, `club`, `position`
-(`GKP`/`DEF`/`MID`/`FWD`), `points` (season total), and `stats` — a short,
-position-appropriate list (e.g. Minutes/Saves/Clean sheets/Bonus for
-goalkeepers, Minutes/Goals/Assists/Bonus for attackers) with zero-value stats
-omitted. Sorted by points descending. Filtering/search is client-side.
-
-This is a short-term stand-in for the Spring Boot API's draft endpoints and is
-intentionally decoupled from the Java/Maven build — nothing here is picked up
-by `mvn`, and nothing in `src/` depends on this folder.
-
-## Environment variables
-
-- `FPL_DRAFT_LEAGUE_ID` — required, your draft league's ID.
-- `FPL_DRAFT_API_HOST` — optional, defaults to `https://draft.premierleague.com`.
-
-Set via the Lambda's environment config — see `../terraform/variables.tf`
-(`fpl_draft_league_id`, `fpl_draft_league_id_stage`).
-
-## Infrastructure
-
-Two Lambda functions (`fpl-ultimate-draft-scraper` prod,
-`fpl-ultimate-draft-scraper-stage` stage), each behind its own API Gateway
-HTTP API with a custom domain (`api.fplultimate.com` /
-`stage.api.fplultimate.com`), are provisioned via Terraform in `../terraform/`.
-See that directory's resources for the full picture — ACM cert, Route53
-records, the GitHub OIDC deploy role, etc.
-
-Terraform is applied locally/manually, not from CI. One-time setup:
-
-```bash
-cd ../terraform
-cp terraform.tfvars.example terraform.tfvars   # fill in your real league ID
-terraform init
-terraform plan
-terraform apply
+```markdown
+@import fpl-ultimate-api/CLAUDE.md
+@import fpl-ultimate-frontend/CLAUDE.md
 ```
 
-After `apply`, take the `gha_deploy_role_arn` output and set it as a repo
-secret in GitHub: **Settings → Secrets and variables → Actions → Secrets
-→ New repository secret** → name `AWS_DEPLOY_ROLE_ARN`, value the role ARN.
-That's what lets the deploy workflows authenticate via OIDC with no stored
-AWS keys.
-
-## Local test
-
-```bash
-cd lambda
-FPL_DRAFT_LEAGUE_ID=12345 python3 -c "
-from app import get_standings, get_current_matchups
-print(get_standings())
-print(get_current_matchups())
-"
-```
-
-## Packaging
-
-```bash
-./package.sh
-```
-
-Builds `function.zip` (installs anything in `requirements.txt` alongside
-`app.py`). Used by both the deploy workflows and manual deploys below.
-
-## Deploying
-
-Normally this happens via GitHub Actions, not manually:
-
-- **Stage**: `Actions → Deploy Lambda (Stage) → Run workflow` — prompts for a
-  region (default `us-east-2`) and a branch to deploy.
-- **Prod**: publish a GitHub Release. `Deploy Lambda (Prod)` deploys that
-  release's commit automatically.
-
-Both just run `aws lambda update-function-code` against the Lambda functions
-Terraform already created — they don't touch infrastructure.
-
-### Manual deploy (if needed)
-
-```bash
-./package.sh
-aws lambda update-function-code \
-  --function-name fpl-ultimate-draft-scraper \
-  --zip-file fileb://function.zip \
-  --region us-east-2
-```
-
-Swap the function name for `fpl-ultimate-draft-scraper-stage` to target stage.
-
-## Verifying
-
-```bash
-curl https://api.fplultimate.com/league/standings
-curl https://stage.api.fplultimate.com/league/current-matchups
-curl "https://stage.api.fplultimate.com/league/gameweek-points?team=Rosie%20FC"
-curl https://stage.api.fplultimate.com/league/players
-```
+The sub-repo `CLAUDE.md` files are tracked in version control. The parent-level file is local only.
