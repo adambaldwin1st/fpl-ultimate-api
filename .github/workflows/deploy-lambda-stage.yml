@@ -1,6 +1,9 @@
 name: Deploy Lambda (Stage)
 
 on:
+  push:
+    branches: [main]
+    paths: ["lambda/**"]
   workflow_dispatch:
     inputs:
       region:
@@ -20,16 +23,16 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout ${{ inputs.branch }}
+      - name: Checkout ${{ inputs.branch || github.ref }}
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.branch }}
+          ref: ${{ inputs.branch || github.ref }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
-          aws-region: ${{ inputs.region }}
+          aws-region: ${{ inputs.region || 'us-east-2' }}
 
       - name: Package Lambda
         run: ./lambda/package.sh
@@ -39,4 +42,4 @@ jobs:
           aws lambda update-function-code \
             --function-name fpl-ultimate-draft-scraper-stage \
             --zip-file fileb://lambda/function.zip \
-            --region ${{ inputs.region }}
+            --region ${{ inputs.region || 'us-east-2' }}
