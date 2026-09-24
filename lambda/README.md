@@ -15,13 +15,13 @@ endpoints beyond the league details call the other routes use:
 picks), `event/{gw}/live` (per-player points + scoring breakdown), and
 `event/{gw}/fixtures` (opponent/home-away/kickoff status).
 
-Each player carries `club` — their real PL team's 3-letter short name (e.g.
-`LIV`, `MCI`), sourced from `bootstrap-static`. The frontend maps this to a
-team badge asset; there's no club-crest data or URL in this response, just
-the short name. `opponent`, unlike `club`, is the fixture opponent's *full*
-name (e.g. `Liverpool`) - the frontend displays it as prose ("faces
-Liverpool away"), so it's spelled out rather than abbreviated. `name` is
-each player's FPL `web_name` (last name, or their common nickname where FPL
+Each player carries `club` and `opponent` as the same 3-letter short name
+format (e.g. `LIV`, `MCI`), sourced from `bootstrap-static`. `club` is the
+player's own team, used by the frontend to look up a badge asset - there's
+no club-crest data or URL in this response, just the short name. `opponent`
+is the fixture opponent; the frontend renders it with `isHome` as e.g.
+`LIV(A)`. `name` is each player's FPL `web_name` (last name, or their common
+nickname where FPL
 itself uses one, e.g. `Gabriel`, `J.Timber`) - not the full legal name.
 
 If the current gameweek's lineups aren't locked yet (that picks endpoint
