@@ -15,6 +15,11 @@ endpoints beyond the league details call the other routes use:
 picks), `event/{gw}/live` (per-player points + scoring breakdown), and
 `event/{gw}/fixtures` (opponent/home-away/kickoff status).
 
+Each player carries `club` — their real PL team's 3-letter short name (e.g.
+`LIV`, `MCI`), sourced from `bootstrap-static`, same short names already used
+for `opponent`. The frontend maps this to a team badge asset; there's no
+club-crest data or URL in this response, just the short name.
+
 If the current gameweek's lineups aren't locked yet (that picks endpoint
 404s until shortly before its first kickoff), this falls back to the last
 *locked* gameweek's roster shown against the real upcoming fixtures — every

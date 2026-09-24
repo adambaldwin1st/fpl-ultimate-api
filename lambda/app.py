@@ -204,6 +204,7 @@ def build_team_gameweek_points(entry, roster_gameweek, elements_by_id, team_shor
 
         players.append({
             "name": f'{element["first_name"]} {element["second_name"]}',
+            "club": team_short_names.get(element["team"], "—"),
             "positionType": POSITION_TYPE_NAMES.get(element["element_type"], "UNK"),
             "squadPosition": pick["position"],
             "isStarter": pick["position"] <= 11,
