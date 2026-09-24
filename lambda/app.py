@@ -179,7 +179,7 @@ def flatten_breakdown(explain):
     ]
 
 
-def build_team_gameweek_points(entry, roster_gameweek, elements_by_id, team_short_names, fixture_lookup, live_elements):
+def build_team_gameweek_points(entry, roster_gameweek, elements_by_id, team_short_names, team_names, fixture_lookup, live_elements):
     # entry["entry_id"] (the real FPL Draft entry/team id, used to fetch picks) is a
     # DIFFERENT field from entry["id"] (the league-entry id used in matches/standings)
     # - easy to mix up since both are plain ints on the same object.
@@ -203,12 +203,12 @@ def build_team_gameweek_points(entry, roster_gameweek, elements_by_id, team_shor
             total_points += points
 
         players.append({
-            "name": f'{element["first_name"]} {element["second_name"]}',
+            "name": element["web_name"],
             "club": team_short_names.get(element["team"], "—"),
             "positionType": POSITION_TYPE_NAMES.get(element["element_type"], "UNK"),
             "squadPosition": pick["position"],
             "isStarter": pick["position"] <= 11,
-            "opponent": team_short_names.get(team_fixture["opponent_team_id"], "—") if team_fixture else "—",
+            "opponent": team_names.get(team_fixture["opponent_team_id"], "—") if team_fixture else "—",
             "isHome": team_fixture["is_home"] if team_fixture else None,
             "started": started,
             "points": points,
@@ -255,12 +255,13 @@ def get_gameweek_points(selected_team_name):
     bootstrap = fetch_bootstrap_static()
     elements_by_id = {el["id"]: el for el in bootstrap["elements"]}
     team_short_names = {team["id"]: team["short_name"] for team in bootstrap["teams"]}
+    team_names = {team["id"]: team["name"] for team in bootstrap["teams"]}
     fixture_lookup = build_fixture_lookup(fetch_event_fixtures(gameweek))
     live_elements = fetch_event_live(gameweek)["elements"]
 
     def team_payload(entry):
         return build_team_gameweek_points(
-            entry, roster_gameweek, elements_by_id, team_short_names, fixture_lookup, live_elements
+            entry, roster_gameweek, elements_by_id, team_short_names, team_names, fixture_lookup, live_elements
         )
 
     return {
