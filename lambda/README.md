@@ -20,9 +20,10 @@ format (e.g. `LIV`, `MCI`), sourced from `bootstrap-static`. `club` is the
 player's own team, used by the frontend to look up a badge asset - there's
 no club-crest data or URL in this response, just the short name. `opponent`
 is the fixture opponent; the frontend renders it with `isHome` as e.g.
-`LIV(A)`. `name` is each player's FPL `web_name` (last name, or their common
-nickname where FPL
-itself uses one, e.g. `Gabriel`, `J.Timber`) - not the full legal name.
+`LIV(A)` in both its List and Pitch views - see `fpl-ultimate-frontend`'s
+CLAUDE.md for where. `name` is each player's FPL `web_name` (last name, or
+their common nickname where FPL itself uses one, e.g. `Gabriel`,
+`J.Timber`) - not the full legal name.
 
 If the current gameweek's lineups aren't locked yet (that picks endpoint
 404s until shortly before its first kickoff), this falls back to the last
